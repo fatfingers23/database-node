@@ -142,6 +142,96 @@ class Client {
 
     return this;
   }
+
+  /**
+   * Updates a JSON object by it\'s key
+   * @param {String} key DB key
+   * @param {String} objectKey The key of the saved object in the db.
+   * @param {any} value The value to replace the previous value.
+   */
+  async updateObject(key, objectKey, value) {
+    let dbValue = await this.get(key);
+    if (typeof dbValue != 'object') {
+      throw new SyntaxError(
+        `There was not an object saved at the ${key}, please make sure it is an object saved and not an array`
+      );
+    }
+    try {
+      dbValue[objectKey] = value;
+    } catch (_err) {
+      throw new SyntaxError(
+        `There was a failure adding or updating the value to the saved object with the key ${objectKey}`
+      );
+    }
+    await this.set(key, dbValue);
+    return dbValue;
+  }
+
+  /**
+   * Pushes to an array object saved in the database
+   * @param {String} key DB key
+   * @param {any} item the item being pushed into the array.
+   */
+  async pushArray(key, item) {
+    let dbValue = await this.get(key);
+
+    if (!Array.isArray(dbValue)) {
+      throw new SyntaxError(
+        `There was not an array saved at the ${key}, please make sure it is an array saved and not an object`
+      );
+    }
+    dbValue.push(item);
+    await this.set(key, dbValue);
+    return dbValue;
+  }
+
+  /**
+   * Deletes an item in an array object saved in the database
+   * @param {String} key DB key
+   * @param {any} index the index of the item in the array.
+   */
+  async deleteArrayItemByIndex(key, index) {
+    let dbValue = await this.get(key);
+
+    if (!Array.isArray(dbValue)) {
+      throw new SyntaxError(
+        `There was not an array saved at the ${key}, please make sure it is an array saved and not an object`
+      );
+    }
+    dbValue.splice(index, 1);
+
+    await this.set(key, dbValue);
+    return dbValue;
+  }
+
+  /**
+   * Deletes an item in an array object saved in the database
+   * @param {String} key DB key
+   * @param {any} objectKey the key of the object you are looking for
+   * @param {any} searchValue the value used to find the object to remove in the array
+   */
+  async deleteArrayItemByValue(key, objectKey, searchValue) {
+    let dbValue = await this.get(key);
+
+    if (!Array.isArray(dbValue)) {
+      throw new SyntaxError(
+        `There was not an array saved at the ${key}, please make sure it is an array saved and not an object`
+      );
+    }
+    const indexOfObject = dbValue.findIndex(object => {
+      return object[objectKey] == searchValue;
+    });
+    if (indexOfObject == -1) {
+      throw new SyntaxError(
+        `Was not able to find an object with the search value of ${searchValue}`
+      );
+    }
+    dbValue.splice(indexOfObject, 1);
+
+    await this.set(key, dbValue);
+    return dbValue;
+  }
 }
+
 
 module.exports = Client;

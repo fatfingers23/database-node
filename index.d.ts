@@ -6,6 +6,9 @@ export class Client {
   public set(key: string, value: any): Client;
   public delete(key: string): Client;
   public list(prefix?: string): Promise<string[]>;
+  public updateObject(key: string, objectKey: string, value: string): Object
+  public deleteArrayItemByIndex(key: string, index: string): Array
+  public deleteArrayItemByValue(key: string, objectKey: string, searchValue: Any): Array
 
   // Dynamic
   public empty(): Client;
