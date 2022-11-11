@@ -7,6 +7,7 @@ export class Client {
   public delete(key: string): Client;
   public list(prefix?: string): Promise<string[]>;
   public updateObject(key: string, objectKey: string, value: string): Object
+  public pushArray(key: string, item: any): Array;
   public deleteArrayItemByIndex(key: string, index: string): Array
   public deleteArrayItemByValue(key: string, objectKey: string, searchValue: Any): Array
 
