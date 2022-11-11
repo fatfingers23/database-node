@@ -174,7 +174,9 @@ class Client {
    */
   async pushArray(key, item) {
     let dbValue = await this.get(key);
-
+    if (dbValue === null) {
+      dbValue = [];
+    }
     if (!Array.isArray(dbValue)) {
       throw new SyntaxError(
         `There was not an array saved at the ${key}, please make sure it is an array saved and not an object`
